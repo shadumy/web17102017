@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset='utf8'>
+    </head>
+    <body>
+        <ul id='coffee'></ul>  <!--เป็น bullet  -->
+        
+        <button onclick='remove()'>remove</button><br><br><br>
+
+        <input id='task'>
+        
+        <button onclick='add()'>add</button><br><br><br>
+
+        <input id='task2'>
+
+        <button onclick='add2()'>Add</button>
+        <ol id='meow'></ol> <!--เป็น list เป็นข้อๆ  -->
+        <button onclick='clean()'>Clear</button><br><br><br>
+
+        <button onclick='decrease()'>Decrease</button>
+        <button onclick='increase()'>Increase</button>
+        <h2 id='temperature'>25</h2>
+
+        <button onclick='refresh()'>Refresh</button>
+        <ul id='list'></ul><br><br><br>
+
+        <button onclick='go()'>Go</button><br><br><br>
+
+        <input id='search'>
+        <button onclick='search()'>探しましょう！</button> <br><br><br>
+
+        <button onclick='talk()'>話す</button> <br><br><br>
+
+        <button onclick='locate()'>Locate</button>
+       
+
+        <script>
+            var data =['Latte', 'Mocha', 'Espresso']
+            var element = document.getElementById('coffee')
+            element.innerHTML = '<li>Latte</li>'
+            for (var e of data) {
+                element.innerHTML += '<li>' + e + '</li>'
+            }   
+            function remove(){
+                element.innerHTML=''
+            }
+            function add(){
+                var input = document.getElementById('task')
+                alert(input.value)
+            } 
+            
+            function add2(){              
+                var input = document.getElementById('task2')
+                var show = document.getElementById('meow')
+                show.innerHTML += '<li>'+input.value+'</li>'
+                input.value=''
+            }
+            function clean(){
+                var input = document.getElementById('task2')
+                var show = document.getElementById('meow')
+                show.innerHTML=''
+            }
+            function decrease(){
+                var show=document.getElementById('temperature')
+                show.innerText=show.innerText-1
+            }
+            function increase(){
+                var show=document.getElementById('temperature')
+                
+                show.innerText=parseInt(show.innerText)+1
+            }
+
+            fetch('https://codestar.work/coffee') //คำสั่ง fetch ใช้ดึงข้อมูลจาก website ได้
+            .then(function(response){
+                return response.json() //แปลง response ให้เป็น Json (Javascript Object Notation)
+            })
+            .then(function(data){
+                var element = document.getElementById('list')
+                for (var e of data){
+                    element.innerHTML += '<li>'+e+'</li>'
+                }
+            })
+            function refresh(){
+                var element = document.getElementById('list')
+                element.innerHTML=''
+                fetch('https://codestar.work/coffee') 
+                .then((response) => response.json() ) //เปลี่ยน anonymos function เป็น arrow function ตัด function ปีกกา return
+                .then((data)=> {
+                    var element = document.getElementById('list')
+                    for (var e of data){
+                    element.innerHTML += '<li>'+e+'</li>'
+                    }
+                })
+            }
+            function go() {
+                location.href='https://google.com'
+            }
+
+            function search(){
+                var input=document.getElementById('search')
+                location.href='https://www.kaidee.com/browse?q='+input.value
+            }
+
+            var engine = new webkitSpeechRecognition() //search ใช้เสียง
+            engine.lang='th'
+            engine.onresult=showing
+            
+            function talk(){   
+                engine.start()
+                setTimeout( () => engine.stop(), 5000)
+            }
+            function showing(event){
+                var t = event.results[0][0].transcript
+                location.href='https://www.kaidee.com/browse?q='+t
+            }
+
+            function locate(){
+                var options = {enableHighAccuracy:true}
+                navigator.geolocation.getCurrentPosition(show,showError,options)
+            }
+            function show(result){
+                var message='Latitude '+result.coords.latitude+'\n'
+                +'Longitude '+result.coords.longitude
+                alert(message)
+            }
+            function showError() {
+                alert('Unable to locate your position')
+            }
+
+
+        </script>
+    
+    </body>
+</html>
